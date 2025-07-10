@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -199,13 +198,11 @@
     const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
 
-    // Configuration
     const OPENROUTER_API_KEY = "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";
-    const SITE_URL = "https://yourwebsite.com";
+    const SITE_URL = "https://mk-chat-bot.vercel.app";
     const SITE_NAME = "MK Chat Bot";
 
     function cleanResponse(text) {
-      // Remove unwanted patterns like *: from the response
       return text.replace(/\*\:|^\:\s*/g, '').trim();
     }
 
@@ -229,7 +226,7 @@
     async function sendMessage() {
       const message = userInput.value.trim();
       if (!message) return;
-      
+
       addMessage(message, 'user');
       userInput.value = '';
       const typingIndicator = showTyping();
@@ -244,14 +241,14 @@
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            "model": "deepseek/deepseek-r1:free",
-            "messages": [{"role": "user", "content": message}]
+            model: "deepseek/deepseek-chat",
+            messages: [{ role: "user", content: message }]
           })
         });
-        
+
         const data = await response.json();
         typingIndicator.remove();
-        
+
         if (data.choices && data.choices[0]?.message?.content) {
           addMessage(data.choices[0].message.content, 'bot');
         } else {
@@ -260,12 +257,15 @@
       } catch (error) {
         typingIndicator.remove();
         addMessage("Error connecting to the AI service.", 'bot');
-        console.error('API Error:', error);
+        console.error('API error:', error);
       }
     }
 
     sendBtn.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
     window.addEventListener('load', () => userInput.focus());
   </script>
 </body>
